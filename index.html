@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MyGCTracker — Let AI handle your job costs.</title>
+  <meta name="description" content="AI-powered receipt tracking for general contractors. Snap a photo, we handle the rest.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root { --navy:#0D1B2A;--navy2:#132236;--blue:#2563EB;--blue-light:#3B82F6;--cyan:#06B6D4;--white:#FFFFFF;--off:#F8FAFC;--gray:#64748B;--light-gray:#E2E8F0;--text:#1E293B; }
+    html { scroll-behavior: smooth; }
+    body { font-family:'Inter',sans-serif;background:var(--white);color:var(--text);line-height:1.6; }
+    nav { display:flex;align-items:center;justify-content:space-between;padding:1.1rem 2.5rem;background:rgba(13,27,42,0.97);backdrop-filter:blur(10px);position:sticky;top:0;z-index:100;border-bottom:1px solid rgba(255,255,255,0.06); }
+    .logo { font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:19px;color:white;letter-spacing:-0.3px; }
+    .logo span { color:var(--cyan); }
+    .nav-links { display:flex;gap:2rem; }
+    .nav-links a { color:rgba(255,255,255,0.6);text-decoration:none;font-size:14px;font-weight:500;transition:color 0.15s; }
+    .nav-links a:hover { color:white; }
+    .nav-cta { background:var(--blue);color:white;padding:9px 20px;border-radius:7px;font-size:14px;font-weight:600;text-decoration:none; }
+    .nav-cta:hover { background:var(--blue-light); }
+    .hero-wrap { background:var(--navy);padding:5rem 2rem;text-align:center;position:relative;overflow:hidden; }
+    .hero-glow { position:absolute;width:700px;height:700px;border-radius:50%;background:radial-gradient(circle,rgba(37,99,235,0.13) 0%,transparent 70%);top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none; }
+    .hero-badge { display:inline-flex;align-items:center;gap:6px;background:rgba(6,182,212,0.1);border:1px solid rgba(6,182,212,0.25);color:var(--cyan);font-size:11px;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;padding:5px 12px;border-radius:20px;margin-bottom:1.5rem; }
+    .pulse-dot { width:6px;height:6px;background:var(--cyan);border-radius:50%;animation:pulse 2s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+    .hero-title { font-family:'Space Grotesk',sans-serif;font-size:clamp(1.8rem,4.5vw,3rem);font-weight:700;color:white;line-height:1.15;letter-spacing:-0.5px;margin-bottom:0.75rem;position:relative;z-index:2; }
+    .hero-title .accent { color:var(--cyan); }
+    .hero-sub { font-size:14px;color:rgba(255,255,255,0.45);max-width:400px;margin:0 auto 2.5rem;line-height:1.7;position:relative;z-index:2; }
+    .phone-stage { display:flex;flex-direction:column;align-items:center;gap:1.5rem;position:relative;z-index:2; }
+    #gc-phone { width:200px;height:400px;background:#1a1a2e;border-radius:32px;border:2px solid rgba(255,255,255,0.12);position:relative;overflow:hidden;box-shadow:0 30px 80px rgba(0,0,0,0.5);transition:all 0.7s cubic-bezier(0.4,0,0.2,1); }
+    #gc-phone.zoomed { width:280px;height:440px;border-radius:24px; }
+    .phone-notch { position:absolute;top:0;left:50%;transform:translateX(-50%);width:70px;height:20px;background:#1a1a2e;border-radius:0 0 14px 14px;z-index:10; }
+    .phone-screen { width:100%;height:100%;background:#F0EFEB;border-radius:30px;overflow:hidden;position:relative; }
+    #gc-flash { position:absolute;inset:0;background:white;border-radius:30px;opacity:0;pointer-events:none;z-index:20; }
+    .gc-scene { position:absolute;inset:0;opacity:0;transition:opacity 0.4s; }
+    .gc-scene.active { opacity:1; }
+    #gc-s1 { background:#111;border-radius:30px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:24px 12px 12px; }
+    .cam-vf { width:130px;height:130px;border:2px solid white;border-radius:14px;position:relative;overflow:hidden;background:#1a1a1a; }
+    .cam-receipt { position:absolute;inset:8px;background:white;border-radius:4px;padding:6px;font-size:5.5px;color:#333;line-height:1.5;font-family:monospace; }
+    .cam-c { position:absolute;width:14px;height:14px;border-color:#06B6D4;border-style:solid;border-width:0; }
+    .cam-c.tl { top:4px;left:4px;border-top-width:2px;border-left-width:2px;border-radius:2px 0 0 0; }
+    .cam-c.tr { top:4px;right:4px;border-top-width:2px;border-right-width:2px;border-radius:0 2px 0 0; }
+    .cam-c.bl { bottom:4px;left:4px;border-bottom-width:2px;border-left-width:2px;border-radius:0 0 0 2px; }
+    .cam-c.br { bottom:4px;right:4px;border-bottom-width:2px;border-right-width:2px;border-radius:0 0 2px 0; }
+    .cam-hint { color:rgba(255,255,255,0.5);font-size:9px; }
+    .cam-shutter { width:44px;height:44px;border-radius:50%;border:3px solid rgba(255,255,255,0.3);display:flex;align-items:center;justify-content:center; }
+    #gc-cambtn { width:34px;height:34px;border-radius:50%;background:white; }
+    #gc-s2 { padding:24px 12px 12px;background:#F0EFEB; }
+    #gc-s3 { padding:24px 12px 12px;background:#F0EFEB; }
+    #gc-s4 { padding:24px 12px 12px;background:#F0EFEB;overflow:hidden; }
+    .sc-hdr { display:flex;align-items:center;justify-content:space-between;margin-bottom:10px; }
+    .sc-title { font-size:12px;font-weight:700;color:#111; }
+    .sc-sub { font-size:8px;color:#888; }
+    .ai-wrap { display:flex;flex-direction:column;align-items:center;gap:8px;padding:8px 0; }
+    .ai-spin { width:30px;height:30px;border:2.5px solid #E2E8F0;border-top-color:#2563EB;border-radius:50%;animation:gcspin 0.8s linear infinite; }
+    @keyframes gcspin { to{transform:rotate(360deg)} }
+    .ai-lbl { font-size:9px;color:#555;font-weight:500; }
+    .ai-rows { display:flex;flex-direction:column;gap:5px; }
+    .ai-row { display:flex;justify-content:space-between;align-items:center;background:white;border-radius:6px;padding:6px 8px;border:1px solid #eee; }
+    .ai-key { font-size:8px;color:#888; }
+    .ai-val { font-size:9px;font-weight:600;color:#111; }
+    .saved-pill { display:none;background:#E1F5EE;border-radius:6px;padding:5px 8px;font-size:8px;color:#0F6E56;font-weight:600;text-align:center;margin-bottom:8px; }
+    .metrics-grid { display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-bottom:8px; }
+    .m-card { background:white;border-radius:7px;padding:6px;border:1px solid #eee; }
+    .m-lbl { font-size:7px;color:#888;margin-bottom:2px; }
+    .m-val { font-size:11px;font-weight:700;color:#111; }
+    .m-val.g { color:#0F6E56; } .m-val.r { color:#993C1D; }
+    .chart-lbl { font-size:8px;font-weight:700;color:#111;margin-bottom:5px; }
+    .chart-bars { display:flex;align-items:flex-end;gap:5px;height:55px;padding:0 2px;margin-bottom:8px; }
+    .cb-wrap { display:flex;flex-direction:column;align-items:center;flex:1;height:100%;justify-content:flex-end; }
+    .cb { width:100%;border-radius:3px 3px 0 0; }
+    .cb-name { font-size:6px;color:#888;margin-top:2px; }
+    .log-hdr { display:flex;align-items:center;justify-content:space-between;margin-bottom:8px; }
+    .log-title { font-size:12px;font-weight:700;color:#111; }
+    .log-count { font-size:8px;color:#2563EB;font-weight:600; }
+    .receipt-list { display:flex;flex-direction:column;gap:5px; }
+    .r-row { background:white;border-radius:7px;padding:7px 8px;border:1px solid #eee;display:flex;align-items:center;justify-content:space-between; }
+    .r-name { font-size:9px;font-weight:600;color:#111; }
+    .r-meta { font-size:7px;color:#888; }
+    .r-right { display:flex;align-items:center;gap:5px; }
+    .r-amt { font-size:9px;font-weight:600; }
+    .r-amt.pos { color:#0F6E56; } .r-amt.neg { color:#993C1D; }
+    .r-view { font-size:7px;background:#E6F1FB;color:#185FA5;padding:2px 6px;border-radius:4px;font-weight:600;white-space:nowrap; }
+    .r-manual { font-size:7px;background:#F0EFEB;color:#888;padding:2px 6px;border-radius:4px;font-weight:600; }
+    .step-dots { display:flex;gap:20px; }
+    .sdw { display:flex;flex-direction:column;align-items:center;gap:6px;opacity:0.35;transition:opacity 0.4s; }
+    .sdw.active { opacity:1; }
+    .sdot { width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,0.3);transition:background 0.3s; }
+    .sdw.active .sdot { background:#06B6D4; }
+    .stxt { font-size:10px;color:rgba(255,255,255,0.5);white-space:nowrap; }
+    .sdw.active .stxt { color:rgba(255,255,255,0.9); }
+    .hero-btns { display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:2rem;position:relative;z-index:2; }
+    .btn-primary { background:var(--blue);color:white;padding:14px 28px;border-radius:8px;font-size:15px;font-weight:600;text-decoration:none;transition:background 0.15s; }
+    .btn-primary:hover { background:var(--blue-light); }
+    .btn-ghost { background:rgba(255,255,255,0.07);color:rgba(255,255,255,0.8);padding:14px 28px;border-radius:8px;font-size:15px;font-weight:500;text-decoration:none;border:1px solid rgba(255,255,255,0.12); }
+    .btn-ghost:hover { background:rgba(255,255,255,0.12); }
+    .stats { background:var(--navy2);border-top:1px solid rgba(255,255,255,0.06);border-bottom:1px solid rgba(255,255,255,0.06);padding:2rem;display:flex;justify-content:center;gap:4rem;flex-wrap:wrap; }
+    .stat { text-align:center; }
+    .stat-num { font-family:'Space Grotesk',sans-serif;font-size:2rem;font-weight:700;color:var(--cyan); }
+    .stat-label { font-size:13px;color:rgba(255,255,255,0.45);margin-top:2px; }
+    .section { max-width:1040px;margin:0 auto;padding:5.5rem 2rem; }
+    .eyebrow { font-size:12px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--blue);margin-bottom:0.75rem; }
+    h2 { font-family:'Space Grotesk',sans-serif;font-size:clamp(1.7rem,3.5vw,2.4rem);font-weight:700;letter-spacing:-0.5px;margin-bottom:3rem;line-height:1.2; }
+    .steps { display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:1.5rem; }
+    .step { padding:2rem;border-radius:12px;border:1px solid var(--light-gray);background:var(--off); }
+    .step-num { font-family:'Space Grotesk',sans-serif;font-size:0.75rem;font-weight:700;letter-spacing:0.1em;color:var(--blue);text-transform:uppercase;margin-bottom:1rem; }
+    .step h3 { font-size:16px;font-weight:600;margin-bottom:0.5rem; }
+    .step p { font-size:14px;color:var(--gray);line-height:1.65; }
+    .features-grid { display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:1.25rem; }
+    .feature { padding:1.5rem;border-radius:10px;border:1px solid var(--light-gray);transition:border-color 0.2s,box-shadow 0.2s; }
+    .feature:hover { border-color:var(--blue-light);box-shadow:0 0 0 3px rgba(37,99,235,0.06); }
+    .feature-icon { font-size:1.4rem;margin-bottom:0.75rem; }
+    .feature h3 { font-size:15px;font-weight:600;margin-bottom:0.4rem; }
+    .feature p { font-size:13px;color:var(--gray);line-height:1.65; }
+    .pricing-wrap { background:var(--navy);padding:5.5rem 2rem; }
+    .pricing-inner { max-width:1040px;margin:0 auto; }
+    .pricing-wrap .eyebrow { color:var(--cyan); }
+    .pricing-wrap h2 { color:white; }
+    .pricing-wrap .sub { color:rgba(255,255,255,0.45);font-size:15px;margin-top:-2rem;margin-bottom:3rem; }
+    .pricing-grid { display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1.25rem;max-width:900px; }
+    .price-card { background:var(--navy2);border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:2rem; }
+    .price-card.featured { border-color:rgba(6,182,212,0.4);background:#132236; }
+    .price-tier { font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:rgba(255,255,255,0.4);margin-bottom:0.5rem; }
+    .price-popular { display:inline-block;background:#06B6D4;color:#0D1B2A;font-size:10px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;padding:3px 10px;border-radius:20px;margin-bottom:0.5rem; }
+    .price-top { display:flex;align-items:flex-end;gap:6px;margin-bottom:0.25rem; }
+    .price-amount { font-family:'Space Grotesk',sans-serif;font-size:2.8rem;font-weight:700;color:white;line-height:1; }
+    .price-mo { font-size:14px;color:rgba(255,255,255,0.4);padding-bottom:5px; }
+    .price-desc { font-size:12px;color:rgba(255,255,255,0.35);margin-bottom:1.5rem; }
+    .price-features { list-style:none;margin-bottom:1.5rem; }
+    .price-features li { font-size:13px;color:rgba(255,255,255,0.7);padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.06);display:flex;align-items:center;gap:10px; }
+    .check { color:var(--cyan);font-size:12px;flex-shrink:0; }
+    .btn-blue { display:block;background:var(--blue);color:white;padding:13px;border-radius:8px;font-size:14px;font-weight:600;text-decoration:none;text-align:center;transition:background 0.15s; }
+    .btn-blue:hover { background:var(--blue-light); }
+    .contact-section { max-width:560px;margin:0 auto;padding:5.5rem 2rem;text-align:center; }
+    .contact-section h2 { margin-bottom:0.5rem; }
+    .contact-section .sub { color:var(--gray);font-size:15px;margin-bottom:2.5rem; }
+    .contact-form { display:flex;flex-direction:column;gap:12px;text-align:left; }
+    .contact-form input,.contact-form textarea { width:100%;padding:12px 16px;border:1px solid var(--light-gray);border-radius:8px;font-size:14px;font-family:inherit;outline:none;transition:border-color 0.15s; }
+    .contact-form input:focus,.contact-form textarea:focus { border-color:var(--blue); }
+    .contact-form textarea { height:110px;resize:vertical; }
+    .submit-btn { background:var(--blue);color:white;padding:13px;border:none;border-radius:8px;font-size:15px;font-weight:600;cursor:pointer;font-family:inherit;transition:background 0.15s; }
+    .submit-btn:hover { background:var(--blue-light); }
+    .success-msg { display:none;color:#059669;font-size:14px;text-align:center;padding:10px;background:#F0FDF4;border-radius:8px; }
+    footer { border-top:1px solid var(--light-gray);padding:2rem;text-align:center;font-size:13px;color:var(--gray); }
+    .footer-logo { font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:16px;color:var(--text);margin-bottom:6px; }
+    .footer-logo span { color:var(--blue); }
+    @keyframes gcsnap { 0%{transform:scale(1)} 50%{transform:scale(0.7);background:#ddd} 100%{transform:scale(1)} }
+    @keyframes gcflash { 0%{opacity:0.9} 100%{opacity:0} }
+    @keyframes gcslide { from{transform:translateY(-8px);opacity:0} to{transform:translateY(0);opacity:1} }
+    @media (max-width:640px) { nav{padding:1rem 1.25rem} .nav-links{display:none} .stats{gap:2rem} .section{padding:3.5rem 1.25rem} .pricing-wrap{padding:3.5rem 1.25rem} .contact-section{padding:3.5rem 1.25rem} }
+  </style>
+</head>
+<body>
+
+
+<div style="background:#06B6D4;color:#0D1B2A;text-align:center;padding:10px 1rem;font-size:13px;font-weight:600;letter-spacing:0.02em;">
+  🎉 Limited offer — First month free when you sign up this week. <a href="#contact" style="color:#0D1B2A;text-decoration:underline;margin-left:6px;">Claim it →</a>
+</div>
+
+<nav>
+  <div class="logo">My<span>GC</span>Tracker</div>
+  <div class="nav-links">
+    <a href="#how-it-works">How it works</a>
+    <a href="#features">Features</a>
+    <a href="#pricing">Pricing</a>
+  </div>
+  <a href="#contact" class="nav-cta">Get Started</a>
+</nav>
+
+<section class="hero-wrap">
+  <div class="hero-glow"></div>
+  <div class="hero-badge"><div class="pulse-dot"></div>AI-Powered · Built for Contractors</div>
+  <h1 class="hero-title">Let AI handle your job costs.<br><span class="accent">You handle the job.</span></h1>
+  <p class="hero-sub">Snap a photo of any receipt. AI reads it in seconds. Your dashboard updates automatically.</p>
+
+  <div class="phone-stage">
+    <div id="gc-phone">
+      <div class="phone-notch"></div>
+      <div class="phone-screen">
+        <div id="gc-flash"></div>
+
+        <div id="gc-s1" class="gc-scene active">
+          <div class="cam-vf">
+            <div class="cam-receipt">HOME DEPOT<br>──────────<br>2x4 Lumber $24.50<br>Box Screws  $8.99<br>PVC Pipe   $12.75<br>──────────<br>TOTAL:     $46.24</div>
+            <div class="cam-c tl"></div><div class="cam-c tr"></div><div class="cam-c bl"></div><div class="cam-c br"></div>
+          </div>
+          <div class="cam-hint">Align receipt in frame</div>
+          <div class="cam-shutter"><div id="gc-cambtn"></div></div>
+        </div>
+
+        <div id="gc-s2" class="gc-scene">
+          <div class="sc-hdr"><div class="sc-title">1041 Arbor Ln</div><div class="sc-sub">AI reading...</div></div>
+          <div class="ai-wrap"><div class="ai-spin"></div><div class="ai-lbl">Analyzing with AI</div></div>
+          <div class="ai-rows">
+            <div class="ai-row"><span class="ai-key">Store</span><span class="ai-val" id="gcv1"></span></div>
+            <div class="ai-row"><span class="ai-key">Amount</span><span class="ai-val" id="gcv2"></span></div>
+            <div class="ai-row"><span class="ai-key">Category</span><span class="ai-val" id="gcv3"></span></div>
+            <div class="ai-row"><span class="ai-key">Items</span><span class="ai-val" id="gcv4"></span></div>
+          </div>
+        </div>
+
+        <div id="gc-s3" class="gc-scene">
+          <div class="sc-hdr"><div class="sc-title">1041 Arbor Ln</div><div class="sc-sub">Updated just now</div></div>
+          <div id="gc-saved" class="saved-pill">✅ Saved — Home Depot $46.24</div>
+          <div class="metrics-grid">
+            <div class="m-card"><div class="m-lbl">Total spent</div><div class="m-val" id="gc-total">$181,223</div></div>
+            <div class="m-card"><div class="m-lbl">Purchases</div><div class="m-val g" id="gc-purch">$182,522</div></div>
+            <div class="m-card"><div class="m-lbl">Returns</div><div class="m-val r">$1,298</div></div>
+            <div class="m-card"><div class="m-lbl">Receipts</div><div class="m-val" id="gc-count">58</div></div>
+          </div>
+          <div class="chart-lbl">Spending by category</div>
+          <div class="chart-bars">
+            <div class="cb-wrap"><div class="cb" style="height:88%;background:#7C6FF7;"></div><div class="cb-name">Mortgage</div></div>
+            <div class="cb-wrap"><div class="cb" id="gc-matbar" style="height:16%;background:#1D9E75;transition:height 0.8s ease;"></div><div class="cb-name">Materials</div></div>
+            <div class="cb-wrap"><div class="cb" style="height:13%;background:#378ADD;"></div><div class="cb-name">Labor</div></div>
+            <div class="cb-wrap"><div class="cb" style="height:2%;background:#888;"></div><div class="cb-name">MISC</div></div>
+          </div>
+        </div>
+
+        <div id="gc-s4" class="gc-scene">
+          <div class="log-hdr"><div class="log-title">Receipt log</div><div class="log-count">59 receipts</div></div>
+          <div class="receipt-list" id="gc-log">
+            <div class="r-row"><div><div class="r-name">Home Depot</div><div class="r-meta">2026-06-08 · Materials</div></div><div class="r-right"><div class="r-amt pos">+$46.24</div><div class="r-view">View</div></div></div>
+            <div class="r-row"><div><div class="r-name">Cash — Labor</div><div class="r-meta">2026-06-07 · Labor</div></div><div class="r-right"><div class="r-amt pos">+$500.00</div><div class="r-manual">Manual</div></div></div>
+            <div class="r-row"><div><div class="r-name">Menards</div><div class="r-meta">2026-06-05 · Materials</div></div><div class="r-right"><div class="r-amt pos">+$183.47</div><div class="r-view">View</div></div></div>
+            <div class="r-row"><div><div class="r-name">ComEd</div><div class="r-meta">2026-06-01 · MISC</div></div><div class="r-right"><div class="r-amt pos">+$94.22</div><div class="r-view">View</div></div></div>
+            <div class="r-row"><div><div class="r-name">Lowe's</div><div class="r-meta">2026-05-30 · Materials</div></div><div class="r-right"><div class="r-amt neg">-$67.00</div><div class="r-view">View</div></div></div>
+            <div class="r-row"><div><div class="r-name">DSP Renovation</div><div class="r-meta">2026-05-28 · Labor</div></div><div class="r-right"><div class="r-amt pos">+$2,400</div><div class="r-view">View</div></div></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="step-dots">
+      <div class="sdw active" id="gcst1"><div class="sdot"></div><div class="stxt">Snap receipt</div></div>
+      <div class="sdw" id="gcst2"><div class="sdot"></div><div class="stxt">AI reads it</div></div>
+      <div class="sdw" id="gcst3"><div class="sdot"></div><div class="stxt">Dashboard updates</div></div>
+      <div class="sdw" id="gcst4"><div class="sdot"></div><div class="stxt">Receipt log</div></div>
+    </div>
+  </div>
+
+  <div class="hero-btns">
+    <a href="#contact" class="btn-primary">Start Free Trial</a>
+    <a href="#how-it-works" class="btn-ghost">See how it works</a>
+  </div>
+</section>
+
+<div class="stats">
+  <div class="stat"><div class="stat-num">2 sec</div><div class="stat-label">To log a receipt</div></div>
+  <div class="stat"><div class="stat-num">80%</div><div class="stat-label">Less bookkeeping time</div></div>
+  <div class="stat"><div class="stat-num">$0</div><div class="stat-label">Lost receipts</div></div>
+  <div class="stat"><div class="stat-num">24/7</div><div class="stat-label">Live job cost dashboard</div></div>
+</div>
+
+<section class="section" id="how-it-works">
+  <div class="eyebrow">How it works</div>
+  <h2>Three steps. Zero spreadsheets.</h2>
+  <div class="steps">
+    <div class="step"><div class="step-num">Step 01</div><h3>Snap the receipt</h3><p>Send a photo to your personal tracking bot on Telegram or upload directly from your phone. Takes 2 seconds at the register.</p></div>
+    <div class="step"><div class="step-num">Step 02</div><h3>AI reads it instantly</h3><p>Our AI extracts the store, amount, date, and items — and auto-categorizes into Materials, Labor, Permits, or whatever fits your job.</p></div>
+    <div class="step"><div class="step-num">Step 03</div><h3>See your costs live</h3><p>Your dashboard updates in real time. See exactly what you've spent by category and download a full report any time.</p></div>
+  </div>
+</section>
+
+<section class="section" id="features" style="padding-top:0;">
+  <div class="eyebrow">Features</div>
+  <h2>Everything you need.<br>Nothing you don't.</h2>
+  <div class="features-grid">
+    <div class="feature"><div class="feature-icon">📸</div><h3>AI receipt scanning</h3><p>Printed, handwritten, or digital — our AI reads any receipt accurately and logs it in seconds.</p></div>
+    <div class="feature"><div class="feature-icon">💬</div><h3>Cash payment entry</h3><p>Paid someone cash? Just type it naturally. "Paid plumber $400 today" — AI handles the rest.</p></div>
+    <div class="feature"><div class="feature-icon">📊</div><h3>Live cost dashboard</h3><p>See job costs by category in real time. Always know where your money is going before it's too late.</p></div>
+    <div class="feature"><div class="feature-icon">📥</div><h3>Excel export</h3><p>Download a full expense report any time. Send it straight to your accountant or use it for bids.</p></div>
+    <div class="feature"><div class="feature-icon">🔔</div><h3>Bill reminders</h3><p>Set monthly reminders for recurring bills. Never miss a payment or forget a subcontractor invoice.</p></div>
+    <div class="feature"><div class="feature-icon">☁️</div><h3>Secure photo backup</h3><p>Every receipt photo is stored securely in the cloud. Pull up proof of any purchase, years later.</p></div>
+  </div>
+</section>
+
+
+<section style="background:var(--navy);padding:5.5rem 2rem;">
+  <div style="max-width:1040px;margin:0 auto;">
+    <div class="eyebrow" style="color:var(--cyan);">What contractors are saying</div>
+    <h2 style="color:white;margin-bottom:3rem;">Real contractors. Real results.</h2>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.5rem;">
+
+      <div style="background:#132236;border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:2rem;">
+        <div style="color:#06B6D4;font-size:1.5rem;margin-bottom:1rem;">❝</div>
+        <p style="color:rgba(255,255,255,0.75);font-size:14px;line-height:1.75;margin-bottom:1.5rem;">
+          I used to lose receipts constantly on job sites. MyGCTracker changed everything — I snap a photo right at the register and it's logged instantly. My accountant loves me now.
+        </p>
+        <div style="display:flex;align-items:center;gap:12px;">
+          <div style="width:42px;height:42px;border-radius:50%;background:rgba(6,182,212,0.15);border:1px solid rgba(6,182,212,0.3);display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:#06B6D4;">R</div>
+          <div>
+            <div style="font-size:14px;font-weight:600;color:white;">Ronald</div>
+            <div style="font-size:12px;color:rgba(255,255,255,0.4);">Top Design Remodeling · Chicago, IL</div>
+          </div>
+        </div>
+      </div>
+
+      <div style="background:#132236;border:1px solid rgba(6,182,212,0.3);border-radius:16px;padding:2rem;">
+        <div style="color:#06B6D4;font-size:1.5rem;margin-bottom:1rem;">❝</div>
+        <p style="color:rgba(255,255,255,0.75);font-size:14px;line-height:1.75;margin-bottom:1.5rem;">
+          Running multiple job sites at once means tracking costs is a nightmare. This app lets me see exactly where every dollar is going across all my projects in real time. Worth every penny.
+        </p>
+        <div style="display:flex;align-items:center;gap:12px;">
+          <div style="width:42px;height:42px;border-radius:50%;background:rgba(6,182,212,0.15);border:1px solid rgba(6,182,212,0.3);display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:#06B6D4;">D</div>
+          <div>
+            <div style="font-size:14px;font-weight:600;color:white;">Damian</div>
+            <div style="font-size:12px;color:rgba(255,255,255,0.4);">DSP Renovation · Chicago, IL</div>
+          </div>
+        </div>
+      </div>
+
+      <div style="background:#132236;border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:2rem;">
+        <div style="color:#06B6D4;font-size:1.5rem;margin-bottom:1rem;">❝</div>
+        <p style="color:rgba(255,255,255,0.75);font-size:14px;line-height:1.75;margin-bottom:1.5rem;">
+          As a developer managing multiple residential projects, job cost tracking was eating up hours every week. MyGCTracker cut that down to minutes. The AI reads even handwritten checks accurately.
+        </p>
+        <div style="display:flex;align-items:center;gap:12px;">
+          <div style="width:42px;height:42px;border-radius:50%;background:rgba(6,182,212,0.15);border:1px solid rgba(6,182,212,0.3);display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:#06B6D4;">A</div>
+          <div>
+            <div style="font-size:14px;font-weight:600;color:white;">Arnold</div>
+            <div style="font-size:12px;color:rgba(255,255,255,0.4);">ARP Residential · Chicagoland, IL</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<div class="pricing-wrap" id="pricing">
+  <div class="pricing-inner">
+    <div class="eyebrow">Pricing</div>
+    <h2>Simple, transparent pricing.</h2>
+    <p class="sub">No setup fees. No contracts. Cancel anytime.</p>
+    <div class="pricing-grid">
+
+      <div class="price-card">
+        <div class="price-tier">Starter</div>
+        <div class="price-top"><div class="price-amount">$47</div><div class="price-mo">/month</div></div>
+        <div class="price-desc">1 job site</div>
+        <ul class="price-features">
+          <li><span class="check">✓</span> 1 project dashboard</li>
+          <li><span class="check">✓</span> Unlimited AI receipt scanning</li>
+          <li><span class="check">✓</span> Live job cost tracking</li>
+          <li><span class="check">✓</span> Secure photo backup</li>
+          <li><span class="check">✓</span> Excel export anytime</li>
+          <li><span class="check">✓</span> Full setup included</li>
+        </ul>
+        <a href="#contact" class="btn-blue">Get Started</a>
+      </div>
+
+      <div class="price-card featured">
+        <div class="price-popular">Most Popular</div>
+        <div class="price-tier">Pro</div>
+        <div class="price-top"><div class="price-amount">$77</div><div class="price-mo">/month</div></div>
+        <div class="price-desc">2–6 job sites</div>
+        <ul class="price-features">
+          <li><span class="check">✓</span> Up to 6 project dashboards</li>
+          <li><span class="check">✓</span> Unlimited AI receipt scanning</li>
+          <li><span class="check">✓</span> Live job cost tracking</li>
+          <li><span class="check">✓</span> Secure photo backup</li>
+          <li><span class="check">✓</span> Bill payment reminders</li>
+          <li><span class="check">✓</span> Excel export anytime</li>
+          <li><span class="check">✓</span> Full setup included</li>
+          <li><span class="check">✓</span> Direct support from Adrian</li>
+        </ul>
+        <a href="#contact" class="btn-blue">Get Started</a>
+      </div>
+
+      <div class="price-card">
+        <div class="price-tier">Enterprise</div>
+        <div class="price-top"><div class="price-amount">$127</div><div class="price-mo">/month</div></div>
+        <div class="price-desc">6+ job sites</div>
+        <ul class="price-features">
+          <li><span class="check">✓</span> Unlimited project dashboards</li>
+          <li><span class="check">✓</span> Unlimited AI receipt scanning</li>
+          <li><span class="check">✓</span> Live job cost tracking</li>
+          <li><span class="check">✓</span> Secure photo backup</li>
+          <li><span class="check">✓</span> Bill payment reminders</li>
+          <li><span class="check">✓</span> Excel export anytime</li>
+          <li><span class="check">✓</span> Full setup included</li>
+          <li><span class="check">✓</span> Priority support from Adrian</li>
+        </ul>
+        <a href="#contact" class="btn-blue">Get Started</a>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+<section style="max-width:700px;margin:0 auto;padding:5.5rem 2rem;">
+  <div class="eyebrow">FAQ</div>
+  <h2 style="margin-bottom:2rem;">Common questions.</h2>
+  <div style="display:flex;flex-direction:column;gap:0;">
+
+    <details style="border-top:1px solid var(--light-gray);padding:1.25rem 0;">
+      <summary style="font-size:15px;font-weight:600;cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center;">
+        How does the setup work? <span style="color:var(--blue);font-size:1.2rem;">+</span>
+      </summary>
+      <p style="font-size:14px;color:var(--gray);line-height:1.7;margin-top:0.75rem;">
+        MyGCTracker handles everything. After you sign up, you'll get a personal Telegram bot set up, a live dashboard for your project, and full onboarding — usually within 24 hours. You don't need to install anything.
+      </p>
+    </details>
+
+    <details style="border-top:1px solid var(--light-gray);padding:1.25rem 0;">
+      <summary style="font-size:15px;font-weight:600;cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center;">
+        Does it work for handwritten receipts and checks? <span style="color:var(--blue);font-size:1.2rem;">+</span>
+      </summary>
+      <p style="font-size:14px;color:var(--gray);line-height:1.7;margin-top:0.75rem;">
+        Yes. The AI handles printed receipts, handwritten notes, and checks. If the amount isn't clear, you'll get a prompt to confirm or correct it before it's saved.
+      </p>
+    </details>
+
+    <details style="border-top:1px solid var(--light-gray);padding:1.25rem 0;">
+      <summary style="font-size:15px;font-weight:600;cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center;">
+        Can I track multiple job sites? <span style="color:var(--blue);font-size:1.2rem;">+</span>
+      </summary>
+      <p style="font-size:14px;color:var(--gray);line-height:1.7;margin-top:0.75rem;">
+        Yes — the Pro plan covers 2–6 job sites and the Enterprise plan covers unlimited. Each project gets its own dashboard, its own receipt log, and its own spending breakdown.
+      </p>
+    </details>
+
+    <details style="border-top:1px solid var(--light-gray);padding:1.25rem 0;">
+      <summary style="font-size:15px;font-weight:600;cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center;">
+        Is my data secure? <span style="color:var(--blue);font-size:1.2rem;">+</span>
+      </summary>
+      <p style="font-size:14px;color:var(--gray);line-height:1.7;margin-top:0.75rem;">
+        Yes. Receipt photos are stored privately in the cloud — only you can access them. Your dashboard is password protected and your expense data lives in your own private Google Sheet.
+      </p>
+    </details>
+
+    <details style="border-top:1px solid var(--light-gray);border-bottom:1px solid var(--light-gray);padding:1.25rem 0;">
+      <summary style="font-size:15px;font-weight:600;cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center;">
+        Can I cancel anytime? <span style="color:var(--blue);font-size:1.2rem;">+</span>
+      </summary>
+      <p style="font-size:14px;color:var(--gray);line-height:1.7;margin-top:0.75rem;">
+        Yes. No contracts, no commitments. Cancel any time and you keep all your data.
+      </p>
+    </details>
+
+  </div>
+</section>
+
+<section class="contact-section" id="contact">
+  <div class="eyebrow">Get in touch</div>
+  <h2>Ready to get started?</h2>
+  <p class="sub">Fill out the form and Adrian will have you set up within 24 hours.</p>
+  <form class="contact-form" onsubmit="handleSubmit(event)">
+    <input type="text" placeholder="Your name" required>
+    <input type="email" placeholder="Email address" required>
+    <input type="tel" placeholder="Phone number (optional)">
+    <textarea placeholder="Tell me about your project — what are you building?"></textarea>
+    <button type="submit" class="submit-btn">Send Message →</button>
+    <div id="form-success" class="success-msg">Message sent! Adrian will be in touch within 24 hours.</div>
+  </form>
+</section>
+
+<footer>
+  <div class="footer-logo">My<span>GC</span>Tracker</div>
+  © 2026 MyGCTracker · Built for contractors, by a contractor.
+</footer>
+
+<script>
+  function handleSubmit(e) {
+    e.preventDefault();
+    document.getElementById('form-success').style.display = 'block';
+    e.target.reset();
+  }
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', e => {
+      e.preventDefault();
+      document.querySelector(a.getAttribute('href'))?.scrollIntoView({ behavior: 'smooth' });
+    });
+  });
+
+  (function() {
+    const phone = document.getElementById('gc-phone');
+    const flash = document.getElementById('gc-flash');
+    const cambtn = document.getElementById('gc-cambtn');
+    function delay(ms) { return new Promise(r => setTimeout(r, ms)); }
+    function showScene(n) {
+      [1,2,3,4].forEach(i => {
+        const s = document.getElementById('gc-s'+i);
+        const st = document.getElementById('gcst'+i);
+        if(s) s.style.opacity = i===n?'1':'0';
+        if(st) {
+          st.style.opacity = i===n?'1':'0.35';
+          const dot = st.querySelector('.sdot');
+          if(dot) dot.style.background = i===n?'#06B6D4':'rgba(255,255,255,0.3)';
+          const txt = st.querySelector('.stxt');
+          if(txt) txt.style.color = i===n?'rgba(255,255,255,0.9)':'rgba(255,255,255,0.5)';
+        }
+      });
+    }
+    function typeVal(el, text, d) {
+      return new Promise(res => {
+        setTimeout(() => {
+          if(!el) return res();
+          el.textContent = '';
+          let i = 0;
+          const t = setInterval(() => { el.textContent += text[i++]; if(i>=text.length){clearInterval(t);res();} }, 38);
+        }, d);
+      });
+    }
+    async function cycle() {
+      showScene(1);
+      phone.classList.remove('zoomed');
+      await delay(1600);
+      cambtn.style.animation = 'gcsnap 0.3s ease forwards';
+      flash.style.animation = 'gcflash 0.4s ease forwards';
+      await delay(420);
+      flash.style.animation = '';
+      cambtn.style.animation = '';
+      await delay(250);
+      phone.classList.add('zoomed');
+      showScene(2);
+      ['gcv1','gcv2','gcv3','gcv4'].forEach(id => { const e = document.getElementById(id); if(e) e.textContent=''; });
+      await typeVal(document.getElementById('gcv1'), 'Home Depot', 500);
+      await typeVal(document.getElementById('gcv2'), '$46.24', 0);
+      await typeVal(document.getElementById('gcv3'), 'Materials', 0);
+      await typeVal(document.getElementById('gcv4'), 'Lumber, screws', 0);
+      await delay(800);
+      showScene(3);
+      const saved = document.getElementById('gc-saved');
+      const total = document.getElementById('gc-total');
+      const purch = document.getElementById('gc-purch');
+      const count = document.getElementById('gc-count');
+      const matbar = document.getElementById('gc-matbar');
+      if(saved) saved.style.display='none';
+      if(total) total.textContent='$181,223';
+      if(purch) purch.textContent='$182,522';
+      if(count) count.textContent='58';
+      if(matbar) matbar.style.height='16%';
+      await delay(500);
+      if(saved){saved.style.display='block';saved.style.animation='gcslide 0.4s ease';}
+      await delay(300);
+      if(total) total.textContent='$181,269';
+      if(purch) purch.textContent='$182,569';
+      if(count) count.textContent='59';
+      if(matbar) matbar.style.height='21%';
+      await delay(2500);
+      showScene(4);
+      const log = document.getElementById('gc-log');
+      if(log){
+        log.style.transition='none';
+        log.style.transform='translateY(0)';
+        await delay(100);
+        log.style.transition='transform 3s ease';
+        log.style.transform='translateY(-130px)';
+        await delay(3200);
+        log.style.transition='none';
+        log.style.transform='translateY(0)';
+      }
+      await delay(600);
+      cycle();
+    }
+    cycle();
+  })();
+</script>
+</body>
+</html>
