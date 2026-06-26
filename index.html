@@ -466,11 +466,7 @@
 </footer>
 
 <script>
-  function handleSubmit(e) {
-    e.preventDefault();
-    document.getElementById('form-success').style.display = 'block';
-    e.target.reset();
-  }
+
   document.querySelectorAll('a[href^="#"]').forEach(a => {
     a.addEventListener('click', e => {
       e.preventDefault();
