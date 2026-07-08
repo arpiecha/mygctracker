@@ -450,12 +450,14 @@
   <div class="eyebrow">Get in touch</div>
   <h2>Ready to get started?</h2>
   <p class="sub">Fill out the form and Adrian will have you set up within 24 hours.</p>
-  <form class="contact-form" action="https://formspree.io/f/mgojkpro" method="POST">
+  <form class="contact-form" id="gc-contact-form">
     <input type="text" name="name" placeholder="Your name" required>
     <input type="email" name="email" placeholder="Email address" required>
     <input type="tel" name="phone" placeholder="Phone number (optional)">
     <textarea name="message" placeholder="Tell me about your project — what are you building?"></textarea>
-    <button type="submit" class="submit-btn">Send Message →</button>
+    <button type="submit" class="submit-btn" id="gc-submit-btn">Send Message →</button>
+    <div id="gc-form-success" style="display:none;background:#E1F5EE;color:#0F6E56;padding:12px;border-radius:8px;font-size:14px;font-weight:500;text-align:center;">Message sent! We will be in touch within 24 hours.</div>
+    <div id="gc-form-error" style="display:none;background:#FAECE7;color:#993C1D;padding:12px;border-radius:8px;font-size:14px;text-align:center;">Something went wrong. Please try again.</div>
   </form>
 </section>
 
@@ -557,7 +559,35 @@
     cycle();
   })();
 
-
+  document.getElementById('gc-contact-form').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const btn = document.getElementById('gc-submit-btn');
+    const success = document.getElementById('gc-form-success');
+    const error = document.getElementById('gc-form-error');
+    btn.textContent = 'Sending...';
+    btn.disabled = true;
+    success.style.display = 'none';
+    error.style.display = 'none';
+    try {
+      const res = await fetch('https://formspree.io/f/mgojkpro', {
+        method: 'POST',
+        headers: { 'Accept': 'application/json' },
+        body: new FormData(this)
+      });
+      if (res.ok) {
+        success.style.display = 'block';
+        this.reset();
+        btn.textContent = 'Send Message →';
+        btn.disabled = false;
+      } else {
+        throw new Error('Server error');
+      }
+    } catch(err) {
+      error.style.display = 'block';
+      btn.textContent = 'Send Message →';
+      btn.disabled = false;
+    }
+  });
 </script>
 </body>
 </html>
