@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>How to Add GCTracker to Your Home Screen — MyGCTracker</title>
+  <meta name="description" content="Step-by-step guide to add MyGCTracker to your iPhone or Android home screen like an app.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root { --navy:#0D1B2A;--navy2:#132236;--blue:#2563EB;--cyan:#06B6D4;--white:#FFFFFF;--off:#F8FAFC;--gray:#64748B;--light:#E2E8F0;--text:#1E293B; }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Inter', sans-serif; background: var(--white); color: var(--text); line-height: 1.6; }
+
+    nav {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1.1rem 2.5rem;
+      background: rgba(13,27,42,0.97); backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .logo { font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 19px; color: white; text-decoration: none; }
+    .logo span { color: var(--cyan); }
+    .nav-back { color: rgba(255,255,255,0.6); text-decoration: none; font-size: 13px; font-weight: 500; display: flex; align-items: center; gap: 6px; transition: color 0.2s; }
+    .nav-back:hover { color: white; }
+
+    .hero { background: var(--navy); padding: 4rem 2rem 3rem; text-align: center; }
+    .hero-badge { display: inline-flex; align-items: center; gap: 6px; background: rgba(6,182,212,0.1); border: 1px solid rgba(6,182,212,0.25); color: var(--cyan); font-size: 11px; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; padding: 5px 12px; border-radius: 20px; margin-bottom: 1.25rem; }
+    .hero h1 { font-family: 'Space Grotesk', sans-serif; font-size: clamp(1.6rem, 4vw, 2.4rem); font-weight: 700; color: white; line-height: 1.2; margin-bottom: 0.75rem; }
+    .hero p { font-size: 15px; color: rgba(255,255,255,0.5); max-width: 420px; margin: 0 auto; }
+
+    .content { max-width: 680px; margin: 0 auto; padding: 3rem 2rem 5rem; }
+
+    .os-tabs { display: flex; gap: 8px; margin-bottom: 2.5rem; }
+    .os-tab { padding: 10px 20px; border-radius: 6px; font-size: 14px; font-weight: 500; cursor: pointer; border: 1px solid var(--light); background: white; color: var(--gray); transition: all 0.2s; }
+    .os-tab.active { background: var(--navy); color: white; border-color: var(--navy); }
+
+    .steps-section { display: none; }
+    .steps-section.active { display: block; }
+
+    .phone-demo { display: flex; justify-content: center; margin: 2rem 0; }
+    .phone { width: 200px; height: 400px; background: #1a1a2e; border-radius: 32px; border: 2px solid rgba(255,255,255,0.12); position: relative; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.2); }
+    .phone-notch { position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 70px; height: 20px; background: #1a1a2e; border-radius: 0 0 14px 14px; z-index: 10; }
+    .phone-screen { width: 100%; height: 100%; background: #F0F2F8; border-radius: 30px; overflow: hidden; position: relative; }
+    .sc { position: absolute; inset: 0; opacity: 0; transition: opacity 0.5s; pointer-events: none; padding: 22px 10px 10px; }
+    .sc.active { opacity: 1; }
+
+    .browser-bar { background: white; border-radius: 8px; padding: 5px 8px; font-size: 8px; color: #555; margin-bottom: 6px; display: flex; align-items: center; gap: 4px; border: 1px solid #eee; }
+    .browser-url { flex: 1; background: #F0F2F8; border-radius: 4px; padding: 3px 6px; font-size: 7px; color: #888; }
+    .share-icon { width: 18px; height: 18px; background: #007AFF; border-radius: 3px; display: flex; align-items: center; justify-content: center; color: white; font-size: 9px; flex-shrink: 0; }
+    .webpage { background: white; border-radius: 8px; padding: 8px; }
+    .webpage-title { font-size: 9px; font-weight: 600; color: #111; margin-bottom: 4px; }
+    .webpage-bar { height: 4px; background: #eee; border-radius: 2px; margin-bottom: 3px; }
+    .sheet { position: absolute; bottom: 0; left: 0; right: 0; background: #F0F2F8; border-radius: 14px 14px 0 0; padding: 10px 8px; border-top: 1px solid #ddd; }
+    .sheet-handle { width: 30px; height: 3px; background: #ccc; border-radius: 2px; margin: 0 auto 8px; }
+    .sheet-list { display: flex; flex-direction: column; gap: 1px; }
+    .sheet-item { background: white; padding: 7px 8px; font-size: 8px; color: #111; display: flex; align-items: center; gap: 6px; }
+    .sheet-item:first-child { border-radius: 8px 8px 0 0; }
+    .sheet-item:last-child { border-radius: 0 0 8px 8px; }
+    .sheet-item.hl { background: #E8F4FF; color: #007AFF; font-weight: 600; }
+    .add-dialog { background: white; border-radius: 12px; margin: 8px 4px; padding: 10px; }
+    .dialog-title { font-size: 9px; font-weight: 600; color: #111; margin-bottom: 8px; text-align: center; }
+    .dialog-preview { display: flex; align-items: center; gap: 6px; background: #F0F2F8; border-radius: 6px; padding: 5px 6px; margin-bottom: 8px; }
+    .app-icon { width: 28px; height: 28px; background: #0D1B2A; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 9px; color: white; font-weight: 700; flex-shrink: 0; }
+    .dialog-btns { display: flex; justify-content: space-between; }
+    .dialog-btn { font-size: 9px; color: #007AFF; padding: 4px 8px; }
+    .dialog-btn.bold { font-weight: 700; }
+    .homescreen { background: linear-gradient(135deg, #1a1a3e, #0a0a1e); border-radius: 30px; }
+    .hs-time { font-size: 28px; font-weight: 200; color: white; text-align: center; padding: 30px 0 5px; }
+    .hs-date { font-size: 8px; color: rgba(255,255,255,0.6); text-align: center; margin-bottom: 16px; }
+    .hs-apps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; padding: 0 10px; }
+    .hs-app { display: flex; flex-direction: column; align-items: center; gap: 3px; }
+    .hs-icon { width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 14px; }
+    .hs-icon.new { background: #0D1B2A; animation: pop 0.6s ease; }
+    .hs-icon.gray { background: rgba(255,255,255,0.15); }
+    .hs-name { font-size: 6px; color: white; text-align: center; }
+    @keyframes pop { 0%{transform:scale(0)} 60%{transform:scale(1.2)} 100%{transform:scale(1)} }
+    @keyframes pulse-ring { 0%{box-shadow:0 0 0 0 rgba(0,122,255,0.5)} 70%{box-shadow:0 0 0 8px rgba(0,122,255,0)} 100%{box-shadow:0 0 0 0 rgba(0,122,255,0)} }
+    .pulse { animation: pulse-ring 1.5s infinite; border-radius: 4px; }
+
+    .nav-dots { display: flex; justify-content: center; gap: 6px; margin: 1rem 0 0.5rem; }
+    .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--light); transition: background 0.3s; cursor: pointer; }
+    .dot.active { background: var(--navy); }
+
+    .step-cards { display: flex; flex-direction: column; gap: 0; margin-top: 1.5rem; }
+    .step-card { display: flex; gap: 14px; align-items: flex-start; padding: 14px 0; border-bottom: 1px solid var(--light); cursor: pointer; }
+    .step-card:last-child { border-bottom: none; }
+    .step-card.active .step-num { background: var(--navy); color: white; border-color: var(--navy); }
+    .step-num { width: 30px; height: 30px; border-radius: 50%; background: var(--off); border: 1px solid var(--light); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 600; color: var(--gray); flex-shrink: 0; transition: all 0.3s; }
+    .step-title { font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 3px; }
+    .step-desc { font-size: 14px; color: var(--gray); line-height: 1.6; }
+
+    .nav-btns { display: flex; gap: 10px; margin-top: 1.5rem; }
+    .nav-btn { flex: 1; padding: 12px; font-size: 14px; font-weight: 600; border-radius: 8px; cursor: pointer; font-family: inherit; transition: all 0.2s; }
+    .btn-prev { background: white; color: var(--text); border: 1px solid var(--light); }
+    .btn-prev:hover { border-color: var(--navy); color: var(--navy); }
+    .btn-prev:disabled { opacity: 0.3; cursor: default; }
+    .btn-next { background: var(--navy); color: white; border: none; }
+    .btn-next:hover { background: var(--navy2); }
+
+    .tip-box { background: rgba(6,182,212,0.08); border: 1px solid rgba(6,182,212,0.2); border-radius: 10px; padding: 1rem 1.25rem; margin-top: 2rem; }
+    .tip-box strong { color: var(--cyan); font-size: 13px; font-weight: 700; display: block; margin-bottom: 4px; }
+    .tip-box p { font-size: 13px; color: var(--gray); line-height: 1.6; }
+
+    footer { background: var(--navy); padding: 1.5rem 2rem; text-align: center; }
+    footer a { color: var(--cyan); text-decoration: none; font-size: 13px; }
+
+    @media (max-width: 500px) {
+      nav { padding: 1rem 1.25rem; }
+      .hero { padding: 3rem 1.25rem 2rem; }
+      .content { padding: 2rem 1.25rem 4rem; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="/" class="logo">My<span>GC</span>Tracker</a>
+  <a href="/" class="nav-back">← Back to home</a>
+</nav>
+
+<div class="hero">
+  <div class="hero-badge">Setup Guide</div>
+  <h1>Add GCTracker to your home screen</h1>
+  <p>Get one-tap access to your dashboard — works like a real app, no App Store needed.</p>
+</div>
+
+<div class="content">
+  <div class="os-tabs">
+    <div class="os-tab active" onclick="switchOS('ios')">iPhone (Safari)</div>
+    <div class="os-tab" onclick="switchOS('android')">Android (Chrome)</div>
+  </div>
+
+  <!-- iOS -->
+  <div class="steps-section active" id="ios-section">
+    <div class="phone-demo">
+      <div class="phone">
+        <div class="phone-notch"></div>
+        <div class="phone-screen">
+
+          <div class="sc active" id="ios-sc1">
+            <div class="browser-bar">
+              <div class="browser-url">mygctracker.com</div>
+              <div class="share-icon pulse">↑</div>
+            </div>
+            <div class="webpage">
+              <div class="webpage-title">MyGCTracker</div>
+              <div class="webpage-bar"></div>
+              <div class="webpage-bar" style="width:70%"></div>
+            </div>
+          </div>
+
+          <div class="sc" id="ios-sc2">
+            <div class="browser-bar">
+              <div class="browser-url">mygctracker.com</div>
+              <div class="share-icon">↑</div>
+            </div>
+            <div class="webpage" style="height:60px;">
+              <div class="webpage-title">MyGCTracker</div>
+              <div class="webpage-bar"></div>
+            </div>
+            <div class="sheet">
+              <div class="sheet-handle"></div>
+              <div class="sheet-list">
+                <div class="sheet-item hl">➕ Add to Home Screen</div>
+                <div class="sheet-item">🔖 Add Bookmark</div>
+                <div class="sheet-item">📋 Copy Link</div>
+                <div class="sheet-item">📤 Share</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="sc" id="ios-sc3">
+            <div class="browser-bar">
+              <div class="browser-url">mygctracker.com</div>
+              <div class="share-icon">↑</div>
+            </div>
+            <div class="add-dialog">
+              <div class="dialog-title">Add to Home Screen</div>
+              <div class="dialog-preview">
+                <div class="app-icon">GC</div>
+                <div>
+                  <div style="font-size:9px;font-weight:500;color:#111;">MyGCTracker</div>
+                  <div style="font-size:7px;color:#888;margin-top:1px;">mygctracker.com</div>
+                </div>
+              </div>
+              <div style="font-size:8px;color:#555;margin-bottom:8px;line-height:1.5;">An icon will be added to your home screen so you can access this website quickly.</div>
+              <div class="dialog-btns">
+                <div class="dialog-btn">Cancel</div>
+                <div class="dialog-btn bold pulse">Add</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="sc homescreen" id="ios-sc4">
+            <div class="hs-time">9:41</div>
+            <div class="hs-date">Monday, July 28</div>
+            <div class="hs-apps">
+              <div class="hs-app"><div class="hs-icon gray">📱</div><div class="hs-name">Phone</div></div>
+              <div class="hs-app"><div class="hs-icon gray">📷</div><div class="hs-name">Camera</div></div>
+              <div class="hs-app"><div class="hs-icon gray">⚙️</div><div class="hs-name">Settings</div></div>
+              <div class="hs-app"><div class="hs-icon gray">🗺️</div><div class="hs-name">Maps</div></div>
+              <div class="hs-app"><div class="hs-icon new">GC</div><div class="hs-name" style="color:white;font-weight:600;">GCTracker</div></div>
+              <div class="hs-app"><div class="hs-icon gray">📧</div><div class="hs-name">Mail</div></div>
+              <div class="hs-app"><div class="hs-icon gray">🎵</div><div class="hs-name">Music</div></div>
+              <div class="hs-app"><div class="hs-icon gray">📰</div><div class="hs-name">News</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="nav-dots" id="ios-dots">
+      <div class="dot active" onclick="iosGoTo(1)"></div>
+      <div class="dot" onclick="iosGoTo(2)"></div>
+      <div class="dot" onclick="iosGoTo(3)"></div>
+      <div class="dot" onclick="iosGoTo(4)"></div>
+    </div>
+
+    <div class="step-cards">
+      <div class="step-card active" id="ios-step1" onclick="iosGoTo(1)">
+        <div class="step-num">1</div>
+        <div><div class="step-title">Open Safari and go to your dashboard</div><div class="step-desc">Open Safari (not Chrome) on your iPhone and navigate to your GCTracker dashboard link. Tap the share button — the box with an arrow pointing up — at the bottom of the screen.</div></div>
+      </div>
+      <div class="step-card" id="ios-step2" onclick="iosGoTo(2)">
+        <div class="step-num">2</div>
+        <div><div class="step-title">Tap "Add to Home Screen"</div><div class="step-desc">Scroll down in the share sheet that appears and tap "Add to Home Screen". It shows a plus icon next to it.</div></div>
+      </div>
+      <div class="step-card" id="ios-step3" onclick="iosGoTo(3)">
+        <div class="step-num">3</div>
+        <div><div class="step-title">Name it and tap "Add"</div><div class="step-desc">You can rename it if you like — "GCTracker" or your project name works great. Tap "Add" in the top right corner to confirm.</div></div>
+      </div>
+      <div class="step-card" id="ios-step4" onclick="iosGoTo(4)">
+        <div class="step-num">4</div>
+        <div><div class="step-title">Done — it's on your home screen!</div><div class="step-desc">The GCTracker icon will appear on your home screen. Tap it anytime to open your dashboard instantly, just like a real app.</div></div>
+      </div>
+    </div>
+
+    <div class="nav-btns">
+      <button class="nav-btn btn-prev" id="ios-prev" onclick="iosPrev()" disabled>← Back</button>
+      <button class="nav-btn btn-next" id="ios-next" onclick="iosNext()">Next →</button>
+    </div>
+
+    <div class="tip-box">
+      <strong>Must use Safari</strong>
+      <p>The "Add to Home Screen" option only appears in Safari on iPhone. If you're using Chrome, switch to Safari first.</p>
+    </div>
+  </div>
+
+  <!-- Android -->
+  <div class="steps-section" id="android-section">
+    <div class="step-cards">
+      <div class="step-card active">
+        <div class="step-num">1</div>
+        <div><div class="step-title">Open Chrome and go to your dashboard</div><div class="step-desc">Open Google Chrome on your Android phone and navigate to your GCTracker dashboard link.</div></div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">2</div>
+        <div><div class="step-title">Tap the three dots menu</div><div class="step-desc">Tap the three vertical dots in the top right corner of Chrome to open the browser menu.</div></div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">3</div>
+        <div><div class="step-title">Tap "Add to Home screen"</div><div class="step-desc">Scroll down in the menu and tap "Add to Home screen". Chrome may also show a banner at the bottom automatically.</div></div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">4</div>
+        <div><div class="step-title">Tap "Add" to confirm</div><div class="step-desc">A dialog will appear asking you to confirm. Tap "Add" and the GCTracker icon will appear on your home screen.</div></div>
+      </div>
+    </div>
+
+    <div class="tip-box">
+      <strong>Tip</strong>
+      <p>On some Android devices Chrome will automatically show a banner saying "Add GCTracker to Home screen" — just tap that instead of going through the menu.</p>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <a href="/">← Back to MyGCTracker</a>
+</footer>
+
+<script>
+let iosCur = 1;
+
+function iosGoTo(n) {
+  document.getElementById('ios-sc' + iosCur).classList.remove('active');
+  document.getElementById('ios-step' + iosCur).classList.remove('active');
+  document.querySelectorAll('#ios-dots .dot')[iosCur-1].classList.remove('active');
+  iosCur = n;
+  document.getElementById('ios-sc' + iosCur).classList.add('active');
+  document.getElementById('ios-step' + iosCur).classList.add('active');
+  document.querySelectorAll('#ios-dots .dot')[iosCur-1].classList.add('active');
+  document.getElementById('ios-prev').disabled = iosCur === 1;
+  document.getElementById('ios-next').textContent = iosCur === 4 ? 'Done ✓' : 'Next →';
+}
+
+function iosNext() { if (iosCur < 4) iosGoTo(iosCur + 1); }
+function iosPrev() { if (iosCur > 1) iosGoTo(iosCur - 1); }
+
+function switchOS(os) {
+  document.querySelectorAll('.os-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.steps-section').forEach(s => s.classList.remove('active'));
+  event.target.classList.add('active');
+  document.getElementById(os + '-section').classList.add('active');
+}
+
+let auto = setInterval(() => { if (iosCur < 4) iosGoTo(iosCur + 1); else clearInterval(auto); }, 2500);
+</script>
+</body>
+</html>
