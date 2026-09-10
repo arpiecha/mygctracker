@@ -60,7 +60,7 @@
     #gc-cambtn { width:34px;height:34px;border-radius:50%;background:white; }
     #gc-s2 { padding:24px 12px 12px;background:#F0EFEB; }
     #gc-s3 { padding:24px 12px 12px;background:#F0EFEB; }
-    #gc-s4 { padding:24px 12px 12px;background:#F0EFEB;overflow:hidden; }
+    #gc-s4 { padding:24px 12px 12px;background:#F0EFEB;overflow:hidden;display:flex;flex-direction:column; }
     .sc-hdr { display:flex;align-items:center;justify-content:space-between;margin-bottom:10px; }
     .sc-title { font-size:12px;font-weight:700;color:#111; }
     .sc-sub { font-size:8px;color:#888; }
@@ -83,7 +83,8 @@
     .cb-wrap { display:flex;flex-direction:column;align-items:center;flex:1;height:100%;justify-content:flex-end; }
     .cb { width:100%;border-radius:3px 3px 0 0; }
     .cb-name { font-size:6px;color:#888;margin-top:2px; }
-    .log-hdr { display:flex;align-items:center;justify-content:space-between;margin-bottom:8px; }
+    .log-hdr { display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;position:relative;z-index:2;flex-shrink:0;background:#F0EFEB; }
+    .log-viewport { position:relative;flex:1;min-height:0;overflow:hidden; }
     .log-title { font-size:12px;font-weight:700;color:#111; }
     .log-count { font-size:8px;color:#2563EB;font-weight:600; }
     .receipt-list { display:flex;flex-direction:column;gap:5px; }
@@ -252,13 +253,21 @@
 
         <div id="gc-s4" class="gc-scene">
           <div class="log-hdr"><div class="log-title">Receipt log</div><div class="log-count">59 receipts</div></div>
-          <div class="receipt-list" id="gc-log">
-            <div class="r-row"><div><div class="r-name">Home Depot</div><div class="r-meta">2026-06-08 · Materials</div></div><div class="r-right"><div class="r-amt pos">+$46.24</div><div class="r-view">View</div></div></div>
-            <div class="r-row"><div><div class="r-name">Cash — Labor</div><div class="r-meta">2026-06-07 · Labor</div></div><div class="r-right"><div class="r-amt pos">+$500.00</div><div class="r-manual">Manual</div></div></div>
-            <div class="r-row"><div><div class="r-name">Menards</div><div class="r-meta">2026-06-05 · Materials</div></div><div class="r-right"><div class="r-amt pos">+$183.47</div><div class="r-view">View</div></div></div>
-            <div class="r-row"><div><div class="r-name">ComEd</div><div class="r-meta">2026-06-01 · MISC</div></div><div class="r-right"><div class="r-amt pos">+$94.22</div><div class="r-view">View</div></div></div>
-            <div class="r-row"><div><div class="r-name">Lowe's</div><div class="r-meta">2026-05-30 · Materials</div></div><div class="r-right"><div class="r-amt neg">-$67.00</div><div class="r-view">View</div></div></div>
-            <div class="r-row"><div><div class="r-name">DSP Renovation</div><div class="r-meta">2026-05-28 · Labor</div></div><div class="r-right"><div class="r-amt pos">+$2,400</div><div class="r-view">View</div></div></div>
+          <div class="log-viewport">
+            <div class="receipt-list" id="gc-log">
+              <div class="r-row"><div><div class="r-name">Home Depot</div><div class="r-meta">2026-06-08 · Materials</div></div><div class="r-right"><div class="r-amt pos">+$46.24</div><div class="r-view">View</div></div></div>
+              <div class="r-row"><div><div class="r-name">Cash — Labor</div><div class="r-meta">2026-06-07 · Labor</div></div><div class="r-right"><div class="r-amt pos">+$500.00</div><div class="r-manual">Manual</div></div></div>
+              <div class="r-row"><div><div class="r-name">Menards</div><div class="r-meta">2026-06-05 · Materials</div></div><div class="r-right"><div class="r-amt pos">+$183.47</div><div class="r-view">View</div></div></div>
+              <div class="r-row"><div><div class="r-name">ComEd</div><div class="r-meta">2026-06-01 · MISC</div></div><div class="r-right"><div class="r-amt pos">+$94.22</div><div class="r-view">View</div></div></div>
+              <div class="r-row"><div><div class="r-name">Lowe's</div><div class="r-meta">2026-05-30 · Materials</div></div><div class="r-right"><div class="r-amt neg">-$67.00</div><div class="r-view">View</div></div></div>
+              <div class="r-row"><div><div class="r-name">DSP Renovation</div><div class="r-meta">2026-05-28 · Labor</div></div><div class="r-right"><div class="r-amt pos">+$2,400</div><div class="r-view">View</div></div></div>
+              <div class="r-row"><div><div class="r-name">Ace Hardware</div><div class="r-meta">2026-05-26 · Materials</div></div><div class="r-right"><div class="r-amt pos">+$78.90</div><div class="r-view">View</div></div></div>
+              <div class="r-row"><div><div class="r-name">Cash — Drywall</div><div class="r-meta">2026-05-24 · Labor</div></div><div class="r-right"><div class="r-amt pos">+$1,200</div><div class="r-manual">Manual</div></div></div>
+              <div class="r-row"><div><div class="r-name">Village Permit</div><div class="r-meta">2026-05-21 · MISC</div></div><div class="r-right"><div class="r-amt pos">+$340.00</div><div class="r-view">View</div></div></div>
+              <div class="r-row"><div><div class="r-name">Floor &amp; Decor</div><div class="r-meta">2026-05-19 · Materials</div></div><div class="r-right"><div class="r-amt pos">+$862.15</div><div class="r-view">View</div></div></div>
+              <div class="r-row"><div><div class="r-name">Nicor Gas</div><div class="r-meta">2026-05-16 · MISC</div></div><div class="r-right"><div class="r-amt pos">+$112.40</div><div class="r-view">View</div></div></div>
+              <div class="r-row"><div><div class="r-name">Cash — Framing</div><div class="r-meta">2026-05-14 · Labor</div></div><div class="r-right"><div class="r-amt pos">+$1,850</div><div class="r-manual">Manual</div></div></div>
+            </div>
           </div>
         </div>
 
