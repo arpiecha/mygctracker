@@ -173,6 +173,21 @@
       .nav-link { padding:0.15rem 0;font-size:16px;color:rgba(255,255,255,0.8); }
       .nav-cta { text-align:center;padding:13px 20px;font-size:15px; }
     }
+    .wg-grid { max-width:900px;margin:0 auto;display:grid;grid-template-columns:1fr auto;gap:3rem;align-items:center; }
+    .wg-points { display:flex;gap:2rem;margin-top:2rem;flex-wrap:wrap; }
+    .wg-cta { text-align:center;flex-shrink:0; }
+    .wg-cta a { display:inline-block;background:#2563EB;color:white;padding:16px 32px;border-radius:8px;
+                font-size:14px;font-weight:700;text-decoration:none;letter-spacing:0.05em;white-space:nowrap;
+                transition:background 0.2s; }
+    .wg-cta a:hover { background:#1D4ED8; }
+    .wg-note { font-size:12px;color:rgba(255,255,255,0.3);margin-top:10px; }
+    /* Two columns squeeze the copy into a sliver on a phone, so it stacks and
+       the button runs the full width underneath. */
+    @media (max-width:760px) {
+      .wg-grid { grid-template-columns:1fr;gap:2rem; }
+      .wg-points { flex-direction:column;gap:1.1rem;margin-top:1.5rem; }
+      .wg-cta a { display:block;width:100%;padding:16px 20px; }
+    }
     @media (max-width:640px) { .stats{gap:2rem} .section{padding:3.5rem 1.25rem} .pricing-wrap{padding:3.5rem 1.25rem} .contact-section{padding:3.5rem 1.25rem} }
   </style>
 </head>
@@ -312,7 +327,7 @@
     <div class="feature"><div class="feature-icon">📸</div><h3>AI receipt scanning</h3><p>Printed, handwritten, or digital — our AI reads any receipt accurately and logs it in seconds.</p></div>
     <div class="feature"><div class="feature-icon">💬</div><h3>Cash payment entry</h3><p>Paid someone cash? Just type it naturally. "Paid plumber $400 today" — AI handles the rest.</p></div>
     <div class="feature"><div class="feature-icon">📊</div><h3>Live cost dashboard</h3><p>See job costs by category in real time. Always know where your money is going before it's too late.</p></div>
-    <div class="feature"><div class="feature-icon">📥</div><h3>Excel export</h3><p>Download a full expense report any time. Send it straight to your accountant or use it for bids.</p></div>
+    <div class="feature"><div class="feature-icon">📥</div><h3>Excel &amp; QuickBooks export</h3><p>Download a full expense report any time, and we can connect your tracker to QuickBooks so the numbers land where your books already are. Send it straight to your accountant or use it for bids.</p></div>
     <div class="feature"><div class="feature-icon">🔔</div><h3>Bill reminders</h3><p>Set monthly reminders for recurring bills. Never miss a payment or forget a subcontractor invoice.</p></div>
     <div class="feature"><div class="feature-icon">☁️</div><h3>Secure photo backup</h3><p>Every receipt photo is stored securely in the cloud. Pull up proof of any purchase, years later.</p></div>
   </div>
@@ -387,7 +402,7 @@
           <li><span class="check">✓</span> Unlimited AI receipt scanning</li>
           <li><span class="check">✓</span> Live job cost tracking</li>
           <li><span class="check">✓</span> Secure photo backup</li>
-          <li><span class="check">✓</span> Excel export anytime</li>
+          <li><span class="check">✓</span> Excel &amp; QuickBooks export anytime</li>
           <li><span class="check">✓</span> Full setup included</li>
         </ul>
         <a href="#contact" class="btn-blue">Get Started</a>
@@ -404,7 +419,7 @@
           <li><span class="check">✓</span> Live job cost tracking</li>
           <li><span class="check">✓</span> Secure photo backup</li>
           <li><span class="check">✓</span> Bill payment reminders</li>
-          <li><span class="check">✓</span> Excel export anytime</li>
+          <li><span class="check">✓</span> Excel &amp; QuickBooks export anytime</li>
           <li><span class="check">✓</span> Full setup included</li>
           <li><span class="check">✓</span> Direct support from Adrian</li>
         </ul>
@@ -421,7 +436,7 @@
           <li><span class="check">✓</span> Live job cost tracking</li>
           <li><span class="check">✓</span> Secure photo backup</li>
           <li><span class="check">✓</span> Bill payment reminders</li>
-          <li><span class="check">✓</span> Excel export anytime</li>
+          <li><span class="check">✓</span> Excel &amp; QuickBooks export anytime</li>
           <li><span class="check">✓</span> Full setup included</li>
           <li><span class="check">✓</span> Priority support from Adrian</li>
         </ul>
@@ -488,12 +503,12 @@
 
 <!-- PAST RECEIPTS BANNER -->
 <section style="background:linear-gradient(135deg,#0D1B2A 0%,#132236 100%);padding:4rem 2rem;border-top:1px solid rgba(255,255,255,0.06);border-bottom:1px solid rgba(255,255,255,0.06);">
-  <div style="max-width:900px;margin:0 auto;display:grid;grid-template-columns:1fr auto;gap:3rem;align-items:center;">
+  <div class="wg-grid">
     <div>
       <div style="display:inline-flex;align-items:center;gap:8px;background:rgba(6,182,212,0.1);border:1px solid rgba(6,182,212,0.25);color:#06B6D4;font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;padding:5px 12px;border-radius:20px;margin-bottom:1.25rem;">🤝 White Glove Setup</div>
       <h2 style="font-family:'Space Grotesk',sans-serif;font-size:clamp(1.5rem,3vw,2.2rem);font-weight:700;color:white;line-height:1.2;letter-spacing:-0.3px;margin-bottom:1rem;">Already mid-project? We've got you covered.</h2>
       <p style="font-size:15px;color:rgba(255,255,255,0.55);line-height:1.8;max-width:560px;">When you sign up, we personally enter all your existing receipts and bills — so your dashboard is <span style="color:white;font-weight:500;">100% up to date from day one.</span> No spreadsheets, no manual entry, no headaches. You don't lift a finger.</p>
-      <div style="display:flex;gap:2rem;margin-top:2rem;flex-wrap:wrap;">
+      <div class="wg-points">
         <div style="display:flex;align-items:center;gap:10px;">
           <div style="width:36px;height:36px;border-radius:50%;background:rgba(6,182,212,0.1);border:1px solid rgba(6,182,212,0.2);display:flex;align-items:center;justify-content:center;font-size:16px;">🧾</div>
           <div>
@@ -517,9 +532,9 @@
         </div>
       </div>
     </div>
-    <div style="text-align:center;flex-shrink:0;">
-      <a href="#contact" style="display:inline-block;background:#2563EB;color:white;padding:16px 32px;border-radius:8px;font-size:14px;font-weight:700;text-decoration:none;letter-spacing:0.05em;white-space:nowrap;transition:background 0.2s;">Get Started Today</a>
-      <div style="font-size:12px;color:rgba(255,255,255,0.3);margin-top:10px;">Included in all plans</div>
+    <div class="wg-cta">
+      <a href="#contact">Get Started Today</a>
+      <div class="wg-note">Included in all plans</div>
     </div>
   </div>
 </section>
